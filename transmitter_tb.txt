@@ -1,0 +1,66 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 04.11.2023 15:41:01
+// Design Name: 
+// Module Name: transmitter_tb
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+module transmitter_tb;
+
+  reg [7:0] data_in;     // 8-bit input data
+  wire [15:0] transmitted_data;  // Transmitted data
+  wire [7:0] checksum;
+  
+  transmitter uut(
+    .data_in(data_in),
+    .transmitted_data(transmitted_data),
+    .checksum(checksum)
+  );
+
+reg [7:0] received_data;
+reg [7:0] received_checksum;
+reg [7:0] recalculated_checksum;
+
+always @* begin
+  received_data = transmitted_data[15:8];
+  received_checksum = transmitted_data[7:0];
+  recalculated_checksum = received_data ^ 8'b11111111;
+end
+
+initial begin
+  data_in = 8'b10101010;
+  #10 data_in = 8'b11001100;
+  #10 data_in = 8'b11010000;
+  #10 data_in = 8'b10001000;
+  #10 $finish;
+  end
+
+always @* begin
+  if (received_checksum === recalculated_checksum) begin
+    $display("Data_in = %b | Transmitted_data = %b | Received_Checksum = %b | Recalculated_checksum = %b | received_data = %b | No error detected in transmitted data.", data_in, transmitted_data, received_checksum, recalculated_checksum, received_data);
+  end else begin
+    $display("Data_in = %b | Transmitted_data = %b | Received_Checksum = %b | Recalculated_checksum = %b | received_data = %b | Error detected in transmitted data.", data_in, transmitted_data, received_checksum, recalculated_checksum, received_data);
+  end
+end
+
+endmodule
+
+
+
+
+
+
+
