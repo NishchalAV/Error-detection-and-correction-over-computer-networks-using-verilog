@@ -1,32 +1,17 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 04.11.2023 15:39:45
-// Design Name: 
-// Module Name: transmitter
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
 module transmitter(
   input [7:0] data_in,
   output reg [15:0] transmitted_data,
   output reg [7:0] checksum
 );
+wire [7:0] data_out;
+wire error_detected;
+
 always @* begin
   checksum = data_in ^ 8'b11111111;
   transmitted_data = {data_in, checksum};
 end
 
+receiver rv(transmitted_data,data_out,error_detected);
+
 endmodule
+
